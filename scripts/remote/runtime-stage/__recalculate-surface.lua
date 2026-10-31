@@ -1,6 +1,6 @@
 local surface_utils = require("scripts.lib.surface-utils")
 
-local common_utils = require("scripts.lib.common-utils")
+local dbug = require("__factory077-lib__.modules.debug")
 
 return function(event_data)
     --
@@ -11,7 +11,7 @@ return function(event_data)
     -------------------------------------------------------
     -------------------------------------------------------
 
-    common_utils.debug_inGame("recalculating surface '" .. surface.name .. "' ...", true)
+    dbug.print("recalculating surface '" .. surface.name .. "' ...", true)
 
     surface_utils.recalculate_surface(surface)
     --

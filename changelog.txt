@@ -1,4 +1,10 @@
 ---------------------------------------------------------------------------------------------------
+Version: 1.4.4
+Date: 25-10-2026
+  Changes:
+    - Better timers (again): created a custom lib for nth_ticks.
+    - Most functions migrated to an external lib.
+---------------------------------------------------------------------------------------------------
 Version: 1.4.3
 Date: 21-08-2026
   Bugfixes:

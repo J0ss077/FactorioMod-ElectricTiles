@@ -1,4 +1,4 @@
-local common_utils = require("scripts.lib.common-utils")
+local dbug = require("__factory077-lib__.modules.debug")
 
 local first_use = false
 
@@ -6,9 +6,7 @@ return function(event_data)
     --
     if not first_use then
         --
-        common_utils.debug_inGame("WARNING!! refressing a surface consumes a good amount of computational power. continue at your own risk", true)
-        --
-        first_use = true
+        dbug.print("WARNING!! refressing a surface consumes a good amount of computational power. continue at your own risk", true); first_use = true
         --
     elseif event_data.player_index then
         --

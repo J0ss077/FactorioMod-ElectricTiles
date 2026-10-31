@@ -2,7 +2,9 @@ local caching_controller = require("scripts.controller.cache-controller")
 
 local network_mapper = require("scripts.unique.network-mapper")
 
-local surface_utils = require("scripts.lib.surface-utils")
+local geometry = require("__factory077-lib__.modules.geometry")
+
+local dbug = require("__factory077-lib__.modules.debug")
 
 local game_storage = require("scripts.var.game-storage")
 
@@ -10,12 +12,14 @@ local temp_storage = require("scripts.var.temp-storage")
 
 local common_utils = require("scripts.lib.common-utils")
 
+local surface_utl = require("scripts.lib.surface-utils")
+
+local definitions = require("scripts.var.definitions")
+
+-----------------
+-----------------
+
 local module = {}
-
------------------
------------------
-
-local subdivisions = { x8 = 8, x16 = 16, x32 = 32 }
 
 local aux_collision_box = { left_top = { x = -0.25, y = -0.25 }, right_bottom = { x = 0.25, y = 0.25 } }
 
@@ -49,12 +53,10 @@ local function process_cube(surface, chunk_world_area, cube)
         position = proxy_position, force = "neutral",
     }
 
-    if proxy then
-        --
-        proxy.destructible = false
+    if proxy then proxy.destructible = false
 
         if cube.touching_limits then
-            --
+
             local proxy_area = {
 
                 { 0 - radius, 0 - radius },
@@ -78,11 +80,8 @@ local function process_cube(surface, chunk_world_area, cube)
                 --
             end
         end
-        ---
     else
-        ---
-        common_utils.debug_inGame("error spawning proxy at X:" .. proxy_position.x .. " Y:" .. proxy_position.y, true)
-        ---
+        dbug.print("error spawning proxy at X:" .. proxy_position.x .. " Y:" .. proxy_position.y, true)
     end
 
     for i0, sub_cube in ipairs(cube.children) do
@@ -104,9 +103,11 @@ local function process_cached_chunks(mode)
     --
     local cache = game_storage.get(mode .. "-caching-chunks")
     --
+    local process_limit = settings.global["F077ET-" .. mode .. "-processing-amount"].value
+    --
     local count = 0
 
-    for subdivision_code, subdivision_value in pairs(subdivisions) do
+    for subdivision_code, subdivision_value in pairs(definitions.chunk_area_sizes) do
         ---
         for chunk_address, v0 in pairs(cache[subdivision_code]) do
             -----
@@ -120,7 +121,7 @@ local function process_cached_chunks(mode)
             --//   (1): prepare complex vars   //--
             --//-------------------------------//--
 
-            local tiles_matrix = common_utils.generate_square_matrix(2, subdivision_value, false)
+            local tiles_matrix = geometry.matrix(2, subdivision_value, false)
 
             local chunk_world_area = {
                 {
@@ -147,7 +148,7 @@ local function process_cached_chunks(mode)
             --//   (3): map tiles' positions   //--
             --//-------------------------------//--
 
-            for i0, tile in ipairs(surface_utils.find_tiles_filtered(surface, {
+            for i0, tile in ipairs(surface_utl.find_tiles_filtered(surface, {
                 --
                 name = temp_storage.list_allowed_tiles, area = chunk_world_area
                 --
@@ -200,7 +201,7 @@ local function process_cached_chunks(mode)
 
             count = count + 1
 
-            if count >= settings.global["F077ET-" .. mode .. "-processing-amount"].value then return end
+            if count >= process_limit then return end
 
             ::continue::
             --
@@ -245,7 +246,7 @@ function module.update_electric_pole(entity)
         },
     }
 
-    if surface_utils.count_tiles_filtered(entity.surface, { name = temp_storage.list_allowed_tiles, area = esurface_area }, true) == 0 then return end
+    if surface_utl.count_tiles_filtered(entity.surface, { name = temp_storage.list_allowed_tiles, area = esurface_area }, true) == 0 then return end
 
     local close_proxies = entity.surface.find_entities_filtered {
 
@@ -260,7 +261,7 @@ function module.update_electric_pole(entity)
 
     if #close_proxies == 0 then return end
 
-    for i0, close_proxy in ipairs(common_utils.find_poles_on_contact_with_area(entity.position, common_utils.convert_BoundingBox_to_Area(collision_box), close_proxies)) do
+    for i0, close_proxy in ipairs(common_utils.find_poles_on_contact_with_area(entity.position, geometry.box_to_area(collision_box), close_proxies)) do
         --
         local target_connector = close_proxy.get_wire_connector(defines.wire_connector_id.pole_copper, false)
         --

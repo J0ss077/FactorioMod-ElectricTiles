@@ -89,8 +89,8 @@ for i0, color in pairs(DECT.CONFIG.BASE_COLORS) do
     --
     local tile = data.raw.tile[color.name.."-refined-concrete"]
 
-    -------------------------------------------------------------
-    -------------------------------------------------------------
+    -----------------------------------------------------------
+    -----------------------------------------------------------
 
     local item = table.deepcopy(data.raw.item["dect-"..color.name.."-refined-concrete"])
 

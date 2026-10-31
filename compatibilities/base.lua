@@ -1,8 +1,8 @@
 if not settings.startup["F077ET-comp-base"].value then return end
 
-local definitions = require("scripts.var.definitions")
+local tables = require("__factory077-lib__.modules.tables")
 
-local common_utils = require("scripts.lib.common-utils")
+local definitions = require("scripts.var.definitions")
 
 local __proto_names = {
 
@@ -124,8 +124,8 @@ local modded_concrete_item = data.raw.item[definitions.item_prefix .. "concrete"
 
 local base_recipe_name = { "", { "recipe-name.FO77ET-upgrade-prefix" }, " " }
 
-local L01 = common_utils.combine_arrays(base_recipe_name, table.pack(table.unpack(modded_concrete_item.localised_name --[[@as table]], 2)), true)
-local L02 = common_utils.combine_arrays(base_recipe_name, table.pack(table.unpack(modded_ref_conc_item.localised_name --[[@as table]], 2)), true)
+local L01 = tables.combine_arrays(base_recipe_name, table.pack(table.unpack(modded_concrete_item.localised_name --[[@as table]], 2)), true)
+local L02 = tables.combine_arrays(base_recipe_name, table.pack(table.unpack(modded_ref_conc_item.localised_name --[[@as table]], 2)), true)
 
 local upgrade_to_concrete_recipe = {
     --

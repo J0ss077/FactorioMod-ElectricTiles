@@ -1,8 +1,8 @@
 local caching_controller = require("scripts.controller.cache-controller")
 
-local temp_storage = require("scripts.var.temp-storage")
+local geometry = require("__factory077-lib__.modules.geometry")
 
-local common_utils = require("scripts.lib.common-utils")
+local temp_storage = require("scripts.var.temp-storage")
 
 script.on_event(defines.events.script_raised_destroy, function(event_data)
     -----
@@ -15,7 +15,7 @@ script.on_event(defines.events.script_raised_destroy, function(event_data)
 
     if tile and temp_storage.dict_allowed_tiles[tile.name] then
         --
-        caching_controller.cache_chunk("base", surface.name, common_utils.chunkPosition_from_tilePosition(position))
+        caching_controller.cache_chunk("base", surface.name, geometry.chunk_position(position, temp_storage.chunk_area_size))
         --
     end
     ---

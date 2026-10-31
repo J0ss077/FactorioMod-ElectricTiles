@@ -1,3 +1,5 @@
+local tables = require("__factory077-lib__.modules.tables")
+
 local common_utils = require("scripts.lib.common-utils")
 
 local temp_storage = require("scripts.var.temp-storage")
@@ -141,7 +143,7 @@ local dbug = {
 
 if temp_storage.debug_mode then
     --
-    common_utils.combine_dictionaries(base, dbug)
+    tables.combine_dictionaries(base, dbug)
 end
 
 local prototypes = {}

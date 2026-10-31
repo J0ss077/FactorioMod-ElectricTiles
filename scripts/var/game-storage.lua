@@ -1,3 +1,7 @@
+local tables = require("__factory077-lib__.modules.tables")
+
+local defs = require("scripts.var.definitions")
+
 local module = {}
 
 function module.init()
@@ -13,13 +17,13 @@ end
 --- maintains the save integrity
 ---
 function module.check_storage_integrity()
-    --
-    local caching_template = { ["x8"] = {}, ["x16"] = {}, ["x32"] = {} }
 
-    module.set("base-caching-chunks", module.get("base-caching-chunks") or table.deepcopy(caching_template))
-    --
-    module.set("long-caching-chunks", module.get("long-caching-chunks") or table.deepcopy(caching_template))
-    --
+    local caching_template = {}
+
+    for subdivision_code in pairs(defs.chunk_area_sizes) do caching_template[subdivision_code] = {} end
+
+    module.set("base-caching-chunks", module.get("base-caching-chunks") or tables.combine_dictionaries(caching_template, {}, true))
+    module.set("long-caching-chunks", module.get("long-caching-chunks") or tables.combine_dictionaries(caching_template, {}, true))
 end
 
 ---------------------------------------------------------------

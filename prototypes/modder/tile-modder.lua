@@ -2,11 +2,15 @@
 
 local recycling = mods["recycler"] and require("__recycler__.recycling") or nil
 
-local carrier = data.raw["mod-data"]["F077ET-data-carrier"]
+local mod_data = require("__factory077-lib__.modules.mod_data")
+
+local tables = require("__factory077-lib__.modules.tables")
 
 local common_utils = require("scripts.lib.common-utils")
 
 local definitions = require("scripts.var.definitions")
+
+local carrier = mod_data.read("F077ET-data-carrier")
 
 --// modifications
 
@@ -97,13 +101,13 @@ function module.make_electric_variant(base_data)
     --   (1) load "others"   --
     ---------------------------
 
-    local others = common_utils.combine_dictionaries(default_others, base_data.others or {}, true)
+    local others = tables.combine_dictionaries(default_others, base_data.others or {}, true)
 
     -------------------------------
     --   (2) load and mod tile   --
     -------------------------------
 
-    local new_tile = common_utils.combine_dictionaries(default_tile, base_data.tile or {}, true)
+    local new_tile = tables.combine_dictionaries(default_tile, base_data.tile or {}, true)
 
     assign_prototype_localised_name(new_tile, "tile-name."..base_data.tile.name, "tile-name.F077ET-tile-postfix")
 
@@ -117,7 +121,7 @@ function module.make_electric_variant(base_data)
 
     data:extend({ new_tile })
 
-    table.insert(carrier.data["list-allowed-tiles"]--[[@as table]], new_tile.name)
+    table.insert(carrier["list-allowed-tiles"], new_tile.name)
 
     -------------------------------
     --   (4) load and mod item   --
@@ -125,7 +129,7 @@ function module.make_electric_variant(base_data)
 
     if not base_data.item then return end
 
-    local new_item = common_utils.combine_dictionaries(default_item, base_data.item or {}, true)
+    local new_item = tables.combine_dictionaries(default_item, base_data.item or {}, true)
 
     assign_prototype_localised_name(new_item, "item-name."..base_data.item.name, "item-name.F077ET-item-postfix")
 
@@ -171,7 +175,7 @@ function module.make_electric_variant(base_data)
 
     if not (base_data.recipe or others.use_default_recipe) then return end
 
-    local new_recipe = common_utils.combine_dictionaries(default_recipe, base_data.recipe or {}, true)
+    local new_recipe = tables.combine_dictionaries(default_recipe, base_data.recipe or {}, true)
 
     new_recipe.name = new_item.name
 

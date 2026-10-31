@@ -1,4 +1,6 @@
-require("__core__.lualib.util")
+local dbug = require("__factory077-lib__.modules.debug")
+
+local temp_storage = require("scripts.var.temp-storage")
 
 require("scripts.unique.data-loader").load_startup_settings()
 
@@ -6,11 +8,13 @@ require("scripts.unique.data-loader").load_runtime_settings()
 
 require("scripts.unique.data-loader").load_temp_data()
 
+dbug.configure({ enabled = temp_storage.debug_mode, tag = "electric-tiles" })
+
 require("scripts.handler.on_init")
 
 require("scripts.handler.on_load")
 
-require("scripts.handler.on_tick")
+require("scripts.unique.update-daemon").apply_settings()
 
 require("scripts.handler.on_configuration_changed")
 

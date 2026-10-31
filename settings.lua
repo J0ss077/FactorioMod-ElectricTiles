@@ -1,10 +1,12 @@
+local definitions = require("scripts.var.definitions")
+
 data:extend({
     {
         type = "string-setting",
         name = "F077ET-chunk-subdivision",
         setting_type = "runtime-global",
-        default_value = "x32",
-        allowed_values = { "x32", "x16", "x8" },
+        default_value = definitions.default_chunk_subdivision(),
+        allowed_values = definitions.chunk_subdivision_choices(),
         order = "a",
     },
     {

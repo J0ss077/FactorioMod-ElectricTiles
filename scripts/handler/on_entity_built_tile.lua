@@ -1,8 +1,8 @@
 local caching_controller = require("scripts.controller.cache-controller")
 
-local temp_storage = require("scripts.var.temp-storage")
+local geometry = require("__factory077-lib__.modules.geometry")
 
-local common_utils = require("scripts.lib.common-utils")
+local temp_storage = require("scripts.var.temp-storage")
 
 --- @param event_data EventData.on_player_built_tile | EventData.on_robot_built_tile
 ---
@@ -24,7 +24,7 @@ local function process(event_data, mode)
                 --
                 game.surfaces[event_data.surface_index].name,
                 --
-                common_utils.chunkPosition_from_tilePosition(old_data.position)
+                geometry.chunk_position(old_data.position, temp_storage.chunk_area_size)
             )
         end
     end

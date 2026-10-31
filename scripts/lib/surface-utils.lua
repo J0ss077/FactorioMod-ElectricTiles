@@ -1,6 +1,8 @@
 local caching_controller = require("scripts.controller.cache-controller")
 
-local common_utils = require("scripts.lib.common-utils")
+local geometry = require("__factory077-lib__.modules.geometry")
+
+local tables = require("__factory077-lib__.modules.tables")
 
 local temp_storage = require("scripts.var.temp-storage")
 
@@ -17,7 +19,7 @@ local module = {}
 --- @return (LuaTile)[] | integer
 ---
 local function process_tiles_filtered(mode, surface, filter, deep)
-    --
+
     local tiles --- @type (LuaTile)[] | integer
 
     if mode == "find" then tiles = surface.find_tiles_filtered(filter)
@@ -27,8 +29,8 @@ local function process_tiles_filtered(mode, surface, filter, deep)
     end
 
     if deep then
-        --
-        local names = common_utils.convert_array_to_dictionary(filter.name or {}, true)
+
+        local names = tables.to_set(filter.name or {}, true)
 
         local deep_filter = { area = filter.area or nil, has_hidden_tile = true }
 
@@ -94,7 +96,7 @@ end
 function module.recalculate_surface(surface)
     --
     local chunk_size = temp_storage.chunk_area_size
-
+    --
     local chunk_part = 32 / chunk_size
 
     ----------------------------------
@@ -124,12 +126,7 @@ function module.recalculate_surface(surface)
 
                     if count > 0 then
                         --
-                        caching_controller.cache_chunk("base", surface.name, {
-
-                            x = area_x[1] / chunk_size,
-                            y = area_x[2] / chunk_size,
-                        })
-                        --
+                        caching_controller.cache_chunk("base", surface.name, geometry.chunk_position({ x = area_x[1], y = area_x[2] }, chunk_size))
                         --
                     end
                 end
