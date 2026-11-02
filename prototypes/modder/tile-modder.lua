@@ -194,7 +194,13 @@ function module.make_electric_variant(base_data)
     --   (7) save new recipe and generate recycling recipe   --
     -----------------------------------------------------------
 
-    data:extend({ new_recipe }); if recycling then recycling.generate_recycling_recipe(new_recipe) end
+    data:extend({ new_recipe })
+
+    if recycling and new_recipe.auto_recycle and
+        ---
+        not data.raw.recipe[new_recipe.name .. "-recycling"]
+        ---
+    then recycling.generate_recycling_recipe(new_recipe) end
 
     ------------------------------------
     --   (8) register recipe unlock   --

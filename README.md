@@ -23,10 +23,12 @@ Grids recalculate dynamically whenever tiles are placed or removed. Processing i
 
 ### Compatibilities
 
-- **Dectorio**
+- ~~**Dectorio**~~ _(disabled until the mod gets an update)_
+- **Dectorio Fork**
 - **Space Exploration**
 - **Krastorio2**
 - **Krastorio2 Spaced Out**
+- **Space Platform for Ground** _(disabled by default; requires manual activation)_
 
 ### Known Issues
 

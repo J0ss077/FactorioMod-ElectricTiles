@@ -83,6 +83,20 @@ data:extend({
     },
     {
         type = "bool-setting",
+        name = "F077ET-comp-dectorio-fixes",
+        setting_type = "startup",
+        default_value = true,
+        order = "d-g",
+    },
+    {
+        type = "bool-setting",
+        name = "F077ET-comp-space-platform-for-ground",
+        setting_type = "startup",
+        default_value = false,
+        order = "d-h",
+    },
+    {
+        type = "bool-setting",
         name = "F077ET-debug-mode",
         setting_type = "startup",
         default_value = false,

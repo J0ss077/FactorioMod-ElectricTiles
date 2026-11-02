@@ -1,102 +1,112 @@
-if not settings.startup["F077ET-comp-dectorio"].value or not mods["Dectorio"] or not DECT.ENABLED["painted-concrete"] then return end
+if not settings.startup["F077ET-comp-dectorio"].value or
+   ---
+   not mods["Dectorio"] or not DECT.ENABLED["painted-concrete"]
+   ---
+then return end
 
 local definitions = require("scripts.var.definitions")
 
---// AUX vars/structures
+--// options shared by every variant this file generates
 
 local others = { use_default_recipe = true, technologies = { "dect-concrete-paint" } }
 
-local subgroup00 = data.raw["item-subgroup"][definitions.item_prefix.."terrain"]
+local terrain_subgroup = data.raw["item-subgroup"][definitions.item_prefix .. "terrain"]
+
+--// subgroups
+
+--- Builds one Dectorio subgroup next to the terrain one.
+---
+--- @param suffix string
+---
+--- @param order_suffix string
+---
+--- @return table
+---
+local function make_subgroup(suffix, order_suffix)
+    --
+    return {
+        --
+        type = "item-subgroup",
+        --
+        name = terrain_subgroup.name .. suffix,
+        --
+        group = "dectorio",
+        --
+        order = terrain_subgroup.order .. order_suffix,
+    }
+end
+
+local colord_subgroup = make_subgroup("-dect-colored", "-aa03[dect-colored]")
+
+local hazard_subgroup = make_subgroup("-dect-hazards", "-aa01[dect-hazards]")
+
+local rf_haz_subgroup = make_subgroup("-dect-refined-hazards", "-aa02[dect-refined-hazards]")
+
+data:extend({ hazard_subgroup, rf_haz_subgroup, colord_subgroup })
 
 --// hazard tiles
 
-local subgroup01 = {
+local hazard_families = {
     --
-    type = "item-subgroup",
+    { subgroup = hazard_subgroup.name, paint_prefix = "dect-paint-" },
     --
-    name = subgroup00.name.."-dect-hazards",
-    --
-    group = "dectorio",
-    --
-    order = subgroup00.order.."-aa01[dect-hazards]"
+    { subgroup = rf_haz_subgroup.name, paint_prefix = "dect-paint-refined-" },
 }
 
-local subgroup02 = {
-    --
-    type = "item-subgroup",
-    --
-    name = subgroup00.name.."-dect-refined-hazards",
-    --
-    group = "dectorio",
-    --
-    order = subgroup00.order.."-aa02[dect-refined-hazards]"
-}
+--- Registers one left/right hazard pair for a paint variant.
+---
+--- @param family table
+---
+--- @param variant table
+---
+local function add_hazard_variant(family, variant)
 
-data:extend({ subgroup01, subgroup02 })
+    local left = table.deepcopy(data.raw.tile[family.paint_prefix .. variant.name .. "-left"])
+    local righ = table.deepcopy(data.raw.tile[family.paint_prefix .. variant.name .. "-right"])
 
-local hazards = {
+    left.next_direction = definitions.tile_prefix .. righ.name
+    righ.next_direction = definitions.tile_prefix .. left.name
+
+    local item = table.deepcopy(data.raw.item[family.paint_prefix .. variant.name])
+    item.subgroup = family.subgroup
+
+    righ.placeable_by = { item = definitions.item_prefix .. item.name, count = 1 }
+    righ.minable.result = righ.placeable_by.item
+
+    ElectricTilesDataInterface.modTilePrototypes({ { tile = left, item = item, others = others }, { tile = righ } })
     --
-    { subgroup = subgroup01.name, paint = "dect-paint-" },
     --
-    { subgroup = subgroup02.name, paint = "dect-paint-refined-" },
-}
+end
 
 for i0, variant in pairs(DECT.CONFIG.PAINT_VARIANTS) do
     --
-    for i1, hazard in ipairs(hazards) do
+    for i1, family in ipairs(hazard_families) do
         --
-        local t_left = table.deepcopy(data.raw.tile[hazard.paint..variant.name.."-left"])
-        --
-        local t_righ = table.deepcopy(data.raw.tile[hazard.paint..variant.name.."-right"])
-
-        t_left.next_direction = definitions.tile_prefix..t_righ.name
-
-        t_righ.next_direction = definitions.tile_prefix..t_left.name
-
-        local item = table.deepcopy(data.raw.item[hazard.paint..variant.name])
-
-        item.subgroup = hazard.subgroup
-
-        -------------------------------
-        -------------------------------
-
-        t_righ.placeable_by = { item = definitions.item_prefix..item.name, count = 1 }
-
-        t_righ.minable.result = t_righ.placeable_by.item
-
-        ElectricTilesDataInterface.modTilePrototypes({ { tile = t_left, item = item, others = others }, { tile = t_righ } })
-        --
-        --
+        add_hazard_variant(family, variant)
     end
 end
 
 --// colored refined concretes
 
-local subgroup03 = {
-    --
-    type = "item-subgroup",
-    --
-    name = subgroup00.name.."-dect-colored",
-    --
-    group = "dectorio",
-    --
-    order = subgroup00.order.."-aa03[dect-colored]"
-}
+--- Registers the electric variant of one Dectorio color. The tile is only read;
+--- the item is copied so its subgroup can move to the colored group.
+---
+--- @param color table
+---
+local function add_colored_variant(color)
 
-data:extend({ subgroup03 })
+    local tile = data.raw.tile[color.name .. "-refined-concrete"]
 
-for i0, color in pairs(DECT.CONFIG.BASE_COLORS) do
-    --
-    local tile = data.raw.tile[color.name.."-refined-concrete"]
+    local item = table.deepcopy(data.raw.item["dect-" .. color.name .. "-refined-concrete"])
 
-    -----------------------------------------------------------
-    -----------------------------------------------------------
-
-    local item = table.deepcopy(data.raw.item["dect-"..color.name.."-refined-concrete"])
-
-    item.subgroup = subgroup03.name
+    item.subgroup = colord_subgroup.name
 
     ElectricTilesDataInterface.modTilePrototypes({ { tile = tile, item = item, others = others } })
     --
     --
+end
+
+for i0, color in pairs(DECT.CONFIG.BASE_COLORS) do
+    --
+    add_colored_variant(color)
 end
